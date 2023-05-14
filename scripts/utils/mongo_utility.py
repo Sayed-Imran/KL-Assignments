@@ -4,22 +4,21 @@ from pymongo import MongoClient
 class MongoUtility:
     def __init__(self, uri, db_name, collection_name):
         self.uri = uri
-        self.db_name = db_name
-        self.collection_name = collection_name
+        self.db = db_name
+        self.collection = collection_name
 
     def get_client(self):
         return MongoClient(self.uri)
 
     def get_db(self):
         client = self.get_client()
-        return client[self.db_name]
+        return client[self.db]
 
     def get_collection(self):
         db = self.get_db()
-        return db[self.collection_name]
+        return db[self.collection]
 
     def get_all_documents(self):
-        print("get_all_documents")
         collection = self.get_collection()
         return list(collection.find())
 
@@ -54,3 +53,7 @@ class MongoUtility:
     def pull_from_array(self, query, field, value):
         collection = self.get_collection()
         collection.update_one(query, {"$pull": {field: value}})
+
+    def get_by_aggregation(self, pipelines: list):
+        collection = self.get_collection()
+        return collection.aggregate(pipelines)

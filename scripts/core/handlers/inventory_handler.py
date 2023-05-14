@@ -7,7 +7,7 @@ class InventoryHandler:
     def __init__(self) -> None:
         self.uri = MongoDB().uri
         self.inventory = Inventory(uri=self.uri)
-    
+
     def get_all_items(self):
         products = self.inventory.get_all_products()
         if not products:
@@ -24,17 +24,43 @@ class InventoryHandler:
             return x
         except Exception as e:
             return {"message": "Product not found"}
-    
+
     def add_item(self, item: dict):
         item["product_id"] = uuid()[:8]
         item["created_at"] = datetime.now()
         item["updated_at"] = datetime.now()
-        return self.inventory.insert_product(item)
-    
+        self.inventory.insert_product(item)
+        return item
+
     def update_item(self, product_id: str, item: dict):
         item["updated_at"] = datetime.now()
         self.inventory.update_product(product_id, item)
-    
+        return item
+
     def delete_item(self, product_id: str):
         self.inventory.delete_product(product_id)
     
+    def inventory_price(self):
+        total_amount = self.inventory.pipeline_aggregration([
+            {
+                '$addFields': {
+                    'total_amount': {
+                        '$multiply': [
+                            '$quantity', '$price'
+                        ]
+                    }
+                }
+            }, {
+                '$group': {
+                    '_id': None, 
+                    'total': {
+                        '$sum': '$total_amount'
+                    }
+                }
+            }, {
+                '$project': {
+                    '_id': 0
+                }
+            }
+        ])
+        return {"total_amount": list(total_amount)[0]["total"]}

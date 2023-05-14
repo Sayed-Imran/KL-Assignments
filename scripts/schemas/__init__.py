@@ -2,7 +2,6 @@ from pydantic import BaseModel
 
 class RequestSchema(BaseModel):
     product_name: str
-    product_description: str
     quantity: int
     price: float
 
@@ -10,6 +9,5 @@ class RequestSchema(BaseModel):
 class ResponseSchema(BaseModel):
     product_id: str
     product_name: str
-    product_description: str
     quantity: int
     price: float

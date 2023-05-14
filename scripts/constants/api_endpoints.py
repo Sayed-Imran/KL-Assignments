@@ -5,3 +5,5 @@ class APIEndpoints:
     create_item = "/create-item"
     update_item = "/update-item"
     delete_item = "/delete-item"
+    inventory_price = "/inventory-price"
+    mail = "/mail"

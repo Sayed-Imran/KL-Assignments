@@ -19,4 +19,7 @@ class Inventory(MongoUtility):
     
     def delete_product(self, product_id: str):
         self.delete_document({"product_id": product_id})
+        
+    def pipeline_aggregration(self, pipelines: list):
+        return self.get_by_aggregation(pipelines=pipelines)
     
